@@ -15,36 +15,28 @@ pipeline {
             }
         }
 
-        stage('Build') {
-
-            parallel {
-
-                stage('Frontend Build') {
-                    steps {
-                        dir('frontend') {
-                            bat '''
-                                npm ci
-                                npm run build
-                            '''
-                        }
-                    }
+        stage('Frontend Build') {
+            steps {
+                dir('frontend') {
+                    bat '''
+                        npm ci
+                        npm run build
+                    '''
                 }
-
-                stage('Backend Setup') {
-                    steps {
-                        dir('backend') {
-                            bat '''
-                                python -m venv venv
-                                call venv\\Scripts\\activate
-                                python -m pip install --upgrade pip
-                                pip install -r requirements.txt
-                            '''
-                        }
-                    }
-                }
-
             }
-
+        }
+        
+        stage('Backend Setup') {
+            steps {
+                dir('backend') {
+                    bat '''
+                        python -m venv venv
+                        call venv\\Scripts\\activate
+                        python -m pip install --upgrade pip
+                        pip install -r requirements.txt
+                    '''
+                }
+            }
         }
 
         stage('Docker Build') {
