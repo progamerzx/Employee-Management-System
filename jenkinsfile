@@ -83,10 +83,6 @@ pipeline {
             echo 'Pipeline Aborted'
         }
 
-        always {
-            cleanWs()
-        }
-
     }
 
 }
