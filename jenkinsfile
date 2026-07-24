@@ -18,45 +18,34 @@ pipeline {
         stage('Frontend Build') {
             steps {
                 dir('frontend') {
-                    bat '''
-                        npm ci
-                        npm run build
-                    '''
+                    bat 'npm ci'
+                    bat 'npm run build'
                 }
             }
         }
-        
+
         stage('Backend Setup') {
             steps {
                 dir('backend') {
-                    bat '''
-                        pip install -r requirements.txt
-                    '''
+                    bat 'python -m pip install -r requirements.txt'
                 }
             }
         }
 
         stage('Docker Build') {
             steps {
-                bat """
-                    docker build ^
-                    -t ${IMAGE_NAME}:${IMAGE_TAG} ^
-                    -t ${IMAGE_NAME}:latest .
-                """
+                bat "docker build -t %IMAGE_NAME%:%IMAGE_TAG% -t %IMAGE_NAME%:latest ."
             }
         }
 
         stage('Verify Docker Image') {
             steps {
-                bat """
-                    docker image inspect ${IMAGE_NAME}:${IMAGE_TAG}
-                """
+                bat "docker image inspect %IMAGE_NAME%:%IMAGE_TAG%"
             }
         }
 
         stage('Docker Login') {
             steps {
-
                 withCredentials([
                     usernamePassword(
                         credentialsId: 'dockerhub-creds',
@@ -64,31 +53,21 @@ pipeline {
                         passwordVariable: 'DOCKER_PASS'
                     )
                 ]) {
-
-                    bat """
-                        echo %DOCKER_PASS% | docker login ^
-                        -u %DOCKER_USER% ^
-                        --password-stdin
-                    """
-
+                    bat 'echo %DOCKER_PASS%| docker login -u %DOCKER_USER% --password-stdin'
                 }
             }
         }
 
         stage('Docker Push') {
             steps {
-                bat """
-                    docker push ${IMAGE_NAME}:${IMAGE_TAG}
-                    docker push ${IMAGE_NAME}:latest
-                """
+                bat "docker push %IMAGE_NAME%:%IMAGE_TAG%"
+                bat "docker push %IMAGE_NAME%:latest"
             }
         }
 
         stage('Verify Docker Hub Push') {
             steps {
-                bat """
-                    docker pull ${IMAGE_NAME}:${IMAGE_TAG}
-                """
+                bat "docker pull %IMAGE_NAME%:%IMAGE_TAG%"
             }
         }
 
