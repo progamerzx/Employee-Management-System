@@ -1,0 +1,49 @@
+# Version control
+.git
+.gitignore
+
+# Environment variables and secrets
+.env
+.env.*
+
+# Dependencies
+node_modules/
+frontend/node_modules/
+
+# Build artifacts
+build/
+
+# Python artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+.venv/
+env/
+ENV/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Documentation and non-essential assets
+README.md
+frontend/README.md
+Screenshots/
+jenkinsfile
+Dockerfile
+.dockerignore
+
+# OS metadata
+.DS_Store
+Thumbs.db
+
+# Log files
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
