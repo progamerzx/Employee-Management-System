@@ -1,0 +1,55 @@
+# ── Backend build context exclusions ──────────────────────────────────────────
+# This file lives in backend/ and applies when `docker build` is run from that
+# directory (which is the case in the Jenkinsfile dir('backend') block).
+
+# Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.pyc
+
+# Virtual environments — never include these
+venv/
+.venv/
+env/
+ENV/
+
+# Test files and coverage reports
+tests/
+test_*.py
+*_test.py
+.pytest_cache/
+coverage/
+.coverage
+htmlcov/
+
+# Database / migration files (not needed in the container)
+*.sql
+*.db
+*.sqlite3
+
+# Editor / IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS metadata
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+
+# Docs
+README.md
+*.md
+
+# Env files — credentials must come from K8s Secrets / env vars, not baked in
+.env
+.env.*
+
+# Logs
+*.log

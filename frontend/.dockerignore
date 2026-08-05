@@ -1,0 +1,51 @@
+# ── Frontend build context exclusions ─────────────────────────────────────────
+# This file lives in frontend/ and applies when `docker build` is run from that
+# directory (which is the case in the Jenkinsfile dir('frontend') block).
+
+# Build artifacts — the builder stage runs npm run build itself
+dist/
+build/
+
+# Dependencies — installed fresh inside the Docker layer cache
+node_modules/
+
+# Dev / test config files not needed in the image
+*.test.*
+*.spec.*
+*.test.ts
+*.test.tsx
+coverage/
+.nyc_output/
+cypress/
+playwright/
+
+# Tooling config (lint, format) — not needed at build time
+.oxlintrc.json
+.eslintrc*
+.prettierrc*
+
+# Editor / IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS metadata
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+
+# Docs
+README.md
+*.md
+
+# Env files
+.env
+.env.*
+
+# Logs
+*.log
+npm-debug.log*
