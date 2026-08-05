@@ -1,0 +1,17 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# k8s/kustomization.yaml  (optional — lets you apply everything with one command)
+#
+# Usage:
+#   kubectl apply -k ./k8s
+# ─────────────────────────────────────────────────────────────────────────────
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: ems
+
+resources:
+  - namespace.yaml
+  - configmap.yaml
+  - secret.yaml
+  - backend-deployment.yaml
+  - frontend-deployment.yaml

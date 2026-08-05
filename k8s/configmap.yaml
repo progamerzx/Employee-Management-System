@@ -1,0 +1,22 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# k8s/configmap.yaml
+# Non-sensitive environment variables for the backend Pod.
+# DB_PASSWORD should NOT live here — it lives in secret.yaml.
+# ─────────────────────────────────────────────────────────────────────────────
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ems-backend-config
+  namespace: ems
+  labels:
+    app.kubernetes.io/name: ems-backend
+    app.kubernetes.io/part-of: employee-management-system
+data:
+  DB_SERVER: "emserver.database.windows.net"
+  DB_DATABASE: "Emdb"
+  DB_USERNAME: "ashuj71"
+  DB_DRIVER: "{ODBC Driver 18 for SQL Server}"
+  DB_ENCRYPT: "yes"
+  DB_TRUST_CERTIFICATE: "no"
+  DB_TIMEOUT: "15"
+  PORT: "8000"

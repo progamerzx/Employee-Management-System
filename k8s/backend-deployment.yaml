@@ -1,0 +1,110 @@
+# ── Deployment ────────────────────────────────────────────────────────────────
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ems-backend
+  namespace: ems
+  labels:
+    app.kubernetes.io/name: ems-backend
+    app.kubernetes.io/component: backend
+    app.kubernetes.io/part-of: employee-management-system
+spec:
+  replicas: 2                        # Run 2 replicas for basic availability
+  selector:
+    matchLabels:
+      app: ems-backend
+  strategy:
+    type: RollingUpdate              # Zero-downtime rolling updates
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app: ems-backend
+        app.kubernetes.io/name: ems-backend
+        app.kubernetes.io/component: backend
+        app.kubernetes.io/part-of: employee-management-system
+    spec:
+      # # ── Security context ───────────────────────────────────────────────────
+      # securityContext:
+      #   runAsNonRoot: true
+      #   runAsUser: 1000
+      #   fsGroup: 1000
+
+      containers:
+        - name: ems-backend
+          image: ctslab/ems-backend:latest
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 8000
+              protocol: TCP
+
+          # ── Environment variables from ConfigMap ───────────────────────────
+          envFrom:
+            - configMapRef:
+                name: ems-backend-config
+
+          # ── Sensitive variables from Secret ────────────────────────────────
+          env:
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: ems-backend-secret
+                  key: DB_PASSWORD
+
+          # ── Health checks ──────────────────────────────────────────────────
+          readinessProbe:
+            httpGet:
+              path: /api/status
+              port: 8000
+            initialDelaySeconds: 15   # Give ODBC driver time to initialise
+            periodSeconds: 10
+            failureThreshold: 3
+
+          livenessProbe:
+            httpGet:
+              path: /api/status
+              port: 8000
+            initialDelaySeconds: 30
+            periodSeconds: 20
+            failureThreshold: 3
+
+          # ── Resource limits ────────────────────────────────────────────────
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+
+          # # ── Container security ─────────────────────────────────────────────
+          # securityContext:
+          #   allowPrivilegeEscalation: false
+          #   readOnlyRootFilesystem: false  # gunicorn writes tmp files
+          #   capabilities:
+          #     drop:
+          #       - ALL
+
+---
+# ── Service (ClusterIP) ───────────────────────────────────────────────────────
+apiVersion: v1
+kind: Service
+metadata:
+  name: ems-backend
+  namespace: ems
+  labels:
+    app.kubernetes.io/name: ems-backend
+    app.kubernetes.io/component: backend
+    app.kubernetes.io/part-of: employee-management-system
+spec:
+  type: ClusterIP
+  selector:
+    app: ems-backend
+  ports:
+    - name: http
+      port: 8000
+      targetPort: 8000
+      protocol: TCP

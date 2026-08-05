@@ -40,3 +40,7 @@ __pycache__/
 # OS Files
 .DS_Store
 Thumbs.db
+
+# Kubernetes Secrets — never commit real credentials
+# Use a secret manager or CI/CD injection instead
+k8s/secret.yaml
